@@ -3,6 +3,11 @@
 
 <head>
     <link rel="stylesheet" href="styles.css">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Catch Game</title>
+
 </head>
 
  <body>
@@ -18,9 +23,10 @@
 
         <div class="container">
             <div class="menu">
-                <a href="#" onclick="loadpage('guitar.html')">guitar</a>
-                <a href="#" onclick="loadpage('Chaeyoung.html')">Park Chaeyoung</a>
-                <a href="#" onclick="loadpage('Music.html')">Music</a>
+                <a href="#" onclick="loadpage('guitar.html'); return false;">Guitar</a>
+                <a href="#" onclick="loadpage('Chaeyoung.html'); return false;">Park Chaeyoung</a>
+                <a href="#" onclick="loadpage('Music.html'); return false;">Music</a>
+
 
             </div>
 
@@ -31,6 +37,97 @@
 
        </div>
 
+       <div class="game">
+       <canvas id="gameCanvas" width="400" height="500"></canvas>
+       <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // Player properties
+        const player = {
+            x: 175,
+            y: 450,
+            width: 50,
+            height: 20,
+            speed: 7
+        };
+
+        // Item properties
+        const item = {
+            x: Math.random() * 380,
+            y: 0,
+            size: 20,
+            speed: 4
+        };
+
+        let score = 0;
+        let keys = {};
+
+        // Track keyboard inputs
+        window.addEventListener("keydown", (e) => keys[e.code] = true);
+        window.addEventListener("keyup", (e) => keys[e.code] = false);
+
+        // Core Game Loop
+        function update() {
+            // Move player
+            if (keys["ArrowLeft"] && player.x > 0) player.x -= player.speed;
+            if (keys["ArrowRight"] && player.x < canvas.width - player.width) player.x += player.speed;
+
+            // Move falling item
+            item.y += item.speed;
+
+            // Check for collision with player
+            if (
+                item.y + item.size >= player.y &&
+                item.x + item.size >= player.x &&
+                item.x <= player.x + player.width
+            ) {
+                score++;
+                resetItem();
+            }
+
+            // Check if item fell past the screen (Game Over reset)
+            if (item.y > canvas.height) {
+                score = 0; // Reset score
+                resetItem();
+            }
+        }
+
+        function resetItem() {
+            item.y = 0;
+            item.x = Math.random() * (canvas.width - item.size);
+            item.speed = 4 + Math.random() * 4; // Randomize speed for variety
+        }
+
+        // Render graphics
+        function draw() {
+            // Clear screen
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw player (Blue paddle)
+            ctx.fillStyle = "#0095DD";
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+
+            // Draw falling item (Red square)
+            ctx.fillStyle = "#FF0000";
+            ctx.fillRect(item.x, item.y, item.size, item.size);
+
+            // Draw score text
+            ctx.fillStyle = "#FFF";
+            ctx.font = "20px Arial";
+            ctx.fillText("Score: " + score, 15, 30);
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Start the game
+        gameLoop();
+    </script>
+</div>
 <script src="script.js"></script>
 
 </body>
