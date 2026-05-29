@@ -127,5 +127,12 @@ canvas {
 
 .game{
   padding-left: 25%;
+}
 
+/* Style the footer */
+footer {
+  background-color: #a6cdb3;
+  padding: 30px;
+  text-align: center;
+  color: white;
 }
